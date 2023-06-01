@@ -4,7 +4,7 @@ import { existsSync, promises } from "fs";
 
 class Script {
   // url = "https://api.juleb.com/agent_receiver/sap";
-  url = "http://localhost:5005/sap";
+  url = "https://69be-176-18-80-157.ngrok-free.app/sap";
 
   async insertTest(sqlConfig, startDate, endDate, companyCode) {
     try {
