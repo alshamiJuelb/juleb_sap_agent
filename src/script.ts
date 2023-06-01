@@ -124,6 +124,8 @@ class Script {
         trustedConnection: true, // change to true for local dev / self-signed certs
       },
     };
+    await this.mytest(sqlConfig);
+    return;
     for (let i = 0; i < params.branchesCodes.length; i++) {
       const branchCode = params.branchesCodes[i];
       console.log(`syncing branch code ${branchCode}`);
