@@ -111,7 +111,7 @@ class Script {
     const sqlConfig = {
       user: "juleb-integration", //CHANGE THIS juleb-integration
       password: "9!cf9voK", //CHANGE THIS - 9!cf9voK
-      database: "Integration_test", //CHANGE THIS - Integration_test
+      database: "Integration", //CHANGE THIS - Integration_test
       server: "192.168.1.9\\MSSQL2016", //LAPTOP-T8JG9PTD '192.168.1.8'
       pool: {
         max: 10,
