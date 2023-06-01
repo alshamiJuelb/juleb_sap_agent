@@ -3,14 +3,16 @@ import * as sql from "mssql";
 import { existsSync, promises } from "fs";
 
 class Script {
+  // url = "https://api.juleb.com/agent_receiver/sap";
+  url = "http://localhost:5005/sap";
+
   async insertTest(sqlConfig, startDate, endDate, companyCode) {
     try {
-      const lines = await axios.get(
-        "https://api.juleb.com/agent_receiver/sap/journal-entries",
-        { params: { startDate, endDate, companyCode } }
-      );
-      // await promises.writeFile("./test.json", JSON.stringify(lines.data));
-      // return;
+      const lines = await axios.get(`${this.url}/journal-entries`, {
+        params: { startDate, endDate, companyCode },
+      });
+      await promises.writeFile("./test.json", JSON.stringify(lines.data));
+      return;
       try {
         const table = new sql.Table("dbo.JournalEntries");
         table.create = true;
@@ -96,6 +98,16 @@ class Script {
   }
 
   async wrapper() {
+    const paramsExist = existsSync("./params.json");
+    if (!paramsExist) {
+      console.log(
+        "make sure to have params.json and bookmark.json in the project directory"
+      );
+      return;
+    }
+    const params = JSON.parse(
+      (await promises.readFile("./params.json")).toString()
+    );
     const sqlConfig = {
       user: process.env.DB_USER || "test", //CHANGE THIS juleb-integration
       password: process.env.DB_PWD || "1234", //CHANGE THIS - 9!cf9voK
@@ -112,8 +124,17 @@ class Script {
         trustedConnection: true, // change to true for local dev / self-signed certs
       },
     };
-    await this.insertTest(sqlConfig, "2023-05-11", "2023-05-11", "065");
-    // await this.mytest(sqlConfig);
+    for (let i = 0; i < params.branchesCodes.length; i++) {
+      const branchCode = params.branchesCodes[i];
+      console.log(`syncing branch code ${branchCode}`);
+      await this.insertTest(
+        sqlConfig,
+        params.startDate,
+        params.endDate,
+        branchCode
+      );
+      console.log(`Done syncing branch ${branchCode}`);
+    }
   }
 }
 

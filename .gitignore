@@ -37,3 +37,4 @@ lerna-debug.log*
 
 params.json
 bookmarks.json
+test.json
