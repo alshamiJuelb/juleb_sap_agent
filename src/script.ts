@@ -11,8 +11,8 @@ class Script {
       const lines = await axios.get(`${this.url}/journal-entries`, {
         params: { startDate, endDate, companyCode },
       });
-      await promises.writeFile("./test.json", JSON.stringify(lines.data));
-      return;
+      // await promises.writeFile("./test.json", JSON.stringify(lines.data));
+      // return;
       try {
         const table = new sql.Table("dbo.JournalEntries");
         table.create = true;
@@ -111,7 +111,7 @@ class Script {
     const sqlConfig = {
       user: process.env.DB_USER || "test", //CHANGE THIS juleb-integration
       password: process.env.DB_PWD || "1234", //CHANGE THIS - 9!cf9voK
-      database: process.env.DB_NAME || "integration-test", //CHANGE THIS - Integration_test
+      database: process.env.DB_NAME || "integration", //CHANGE THIS - Integration_test
       server: "LAPTOP-T8JG9PTD", //LAPTOP-T8JG9PTD '192.168.1.8'
       pool: {
         max: 10,
