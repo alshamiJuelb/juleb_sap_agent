@@ -109,10 +109,10 @@ class Script {
       (await promises.readFile("./params.json")).toString()
     );
     const sqlConfig = {
-      user: process.env.DB_USER || "finc2", //CHANGE THIS juleb-integration
-      password: process.env.DB_PWD || "123456", //CHANGE THIS - 9!cf9voK
-      database: process.env.DB_NAME || "integration", //CHANGE THIS - Integration_test
-      server: "192.168.1.9\\MSSQL2016", //LAPTOP-T8JG9PTD '192.168.1.8'
+      user: process.env.DB_USER || "juleb-integration", //CHANGE THIS juleb-integration
+      password: process.env.DB_PWD || "9!cf9voK", //CHANGE THIS - 9!cf9voK
+      database: process.env.DB_NAME || "Integration", //CHANGE THIS - Integration_test
+      server: "192.168.1.8", //LAPTOP-T8JG9PTD '192.168.1.8'
       pool: {
         max: 10,
         min: 0,
