@@ -112,7 +112,7 @@ class Script {
       user: process.env.DB_USER || "test", //CHANGE THIS juleb-integration
       password: process.env.DB_PWD || "1234", //CHANGE THIS - 9!cf9voK
       database: process.env.DB_NAME || "integration", //CHANGE THIS - Integration_test
-      server: "LAPTOP-T8JG9PTD", //LAPTOP-T8JG9PTD '192.168.1.8'
+      server: "192.168.1.9", //LAPTOP-T8JG9PTD '192.168.1.8'
       pool: {
         max: 10,
         min: 0,
