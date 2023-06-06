@@ -4,15 +4,15 @@ import { existsSync, promises } from "fs";
 
 class Script {
   // url = "https://api.juleb.com/agent_receiver/sap";
-  url = "https://69be-176-18-80-157.ngrok-free.app/sap";
+  url = "https://5e7e-176-18-80-157.ngrok-free.app/sap";
 
   async insertTest(sqlConfig, startDate, endDate, companyCode) {
     try {
       const lines = await axios.get(`${this.url}/journal-entries`, {
         params: { startDate, endDate, companyCode },
       });
-      // await promises.writeFile("./test.json", JSON.stringify(lines.data));
-      // return;
+      await promises.writeFile("./test.json", JSON.stringify(lines.data));
+      return;
       try {
         const table = new sql.Table("dbo.JournalEntries");
         table.create = true;
