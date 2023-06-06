@@ -11,8 +11,8 @@ class Script {
       const lines = await axios.get(`${this.url}/journal-entries`, {
         params: { startDate, endDate, companyCode },
       });
-      await promises.writeFile("./test.json", JSON.stringify(lines.data));
-      return;
+      // await promises.writeFile("./test.json", JSON.stringify(lines.data));
+      // return;
       try {
         const table = new sql.Table("dbo.JournalEntries");
         table.create = true;
