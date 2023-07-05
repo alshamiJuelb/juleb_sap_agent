@@ -6,13 +6,20 @@ class Script {
   url = "https://api.juleb.com/agent_receiver/sap";
   // url = "https://5e7e-176-18-80-157.ngrok-free.app/sap";
 
-  async insertTest(sqlConfig, startDate, endDate, companyCode) {
+  async getBranchJE(startDate, endDate, companyCode) {
     try {
-      const lines = await axios.get(`${this.url}/journal-entries`, {
-        params: { startDate, endDate, companyCode },
-      });
-      // await promises.writeFile("./test.json", JSON.stringify(lines.data));
-      // return;
+      return (
+        await axios.get(`${this.url}/journal-entries`, {
+          params: { startDate, endDate, companyCode },
+        })
+      ).data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async insertJE(lines) {
+    try {
       try {
         const table = new sql.Table("dbo.JournalEntries");
         table.create = true;
@@ -54,8 +61,22 @@ class Script {
             line.Remarks1 ? line.Remarks1 : null
           );
         });
-        console.log(table.rows[0]);
-        const pool = new sql.ConnectionPool(sqlConfig);
+        const pool = new sql.ConnectionPool({
+          user: "juleb-integration", //CHANGE THIS juleb-integration
+          password: "9!cf9voK", //CHANGE THIS - 9!cf9voK
+          database: "Integration", //CHANGE THIS - Integration_test
+          server: "192.168.1.9\\MSSQL2016", //LAPTOP-T8JG9PTD '192.168.1.8'
+          pool: {
+            max: 10,
+            min: 0,
+            idleTimeoutMillis: 30000,
+          },
+          options: {
+            encrypt: false,
+            trustServerCertificate: true,
+            trustedConnection: true,
+          },
+        });
         console.log("establishing connection");
         await pool
           .connect()
@@ -82,61 +103,23 @@ class Script {
     }
   }
 
-  async mytest(sqlConfig) {
-    try {
-      // make sure that any items are correctly URL encoded in the connection string
-      console.log("connecting");
-      await sql.connect(sqlConfig);
-      const result =
-        await sql.query`select TOP (100) * from [integration-test].dbo.journalEntries`; //change paramw
-      console.log(result);
-    } catch (err) {
-      console.log("failed");
-      console.log(err);
-      // ... error checks
-    }
-  }
-
   async wrapper() {
     const paramsExist = existsSync("./params.json");
     if (!paramsExist) {
-      console.log(
-        "make sure to have params.json and bookmark.json in the project directory"
-      );
+      console.log("make sure to have params.json in the project directory");
       return;
     }
     const params = JSON.parse(
       (await promises.readFile("./params.json")).toString()
     );
-    const sqlConfig = {
-      user: "juleb-integration", //CHANGE THIS juleb-integration
-      password: "9!cf9voK", //CHANGE THIS - 9!cf9voK
-      database: "Integration", //CHANGE THIS - Integration_test
-      server: "192.168.1.9\\MSSQL2016", //LAPTOP-T8JG9PTD '192.168.1.8'
-      pool: {
-        max: 10,
-        min: 0,
-        idleTimeoutMillis: 30000,
-      },
-      options: {
-        encrypt: false, // for azure
-        trustServerCertificate: true,
-        trustedConnection: true, // change to true for local dev / self-signed certs
-      },
-    };
-    // await this.mytest(sqlConfig);
-    // return;
-    for (let i = 0; i < params.branchesCodes.length; i++) {
-      const branchCode = params.branchesCodes[i];
-      console.log(`syncing branch code ${branchCode}`);
-      await this.insertTest(
-        sqlConfig,
-        params.startDate,
-        params.endDate,
-        branchCode
-      );
-      console.log(`Done syncing branch ${branchCode}`);
-    }
+    const allBranches = await Promise.all(
+      params.branchesCodes.map(
+        async (branch) =>
+          await this.getBranchJE(params.startDate, params.endDate, branch)
+      )
+    );
+    if (allBranches.length) await this.insertJE(allBranches);
+    else console.log("no data to insert");
   }
 }
 
