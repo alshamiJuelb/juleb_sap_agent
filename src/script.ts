@@ -39,7 +39,7 @@ class Script {
       table.columns.add("FileName", sql.VarChar(256), { nullable: true });
       table.columns.add("RegDate", sql.SmallDateTime, { nullable: true });
       table.columns.add("Remarks1", sql.NVarChar(50), { nullable: true });
-      lines.data.forEach((line) => {
+      lines.forEach((line) => {
         table.rows.add(
           line.Branch.toString(),
           line.VoucherType,
