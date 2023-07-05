@@ -8,6 +8,7 @@
     "main": "index.js",
     "scripts": {
         "sync": "ts-node ./src/script.ts",
+        "export": "ts-node ./src/export.ts",
         "lint": "echo \"No linting configured\""
     },
     "dependencies": {
