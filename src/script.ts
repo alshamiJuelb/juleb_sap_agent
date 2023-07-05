@@ -114,7 +114,7 @@ class Script {
           await this.getBranchJE(params.startDate, params.endDate, branch)
       )
     );
-    if (allBranches.length) await this.insertJE(allBranches);
+    if (allBranches.length) await this.insertJE(allBranches.flat());
     else console.log("no data to insert");
   }
 }
