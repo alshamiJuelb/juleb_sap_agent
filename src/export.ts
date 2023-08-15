@@ -3,7 +3,7 @@ import { existsSync, promises } from "fs";
 
 class Script {
   url = "https://api.juleb.com/agent_receiver/sap";
-  // url = "https://5e7e-176-18-80-157.ngrok-free.app/sap";
+  // url = "http://localhost:5006/sap";
 
   async getBranchJE(startDate, endDate, companyCode) {
     try {
@@ -28,16 +28,21 @@ class Script {
     const params = JSON.parse(
       (await promises.readFile("./params.json")).toString()
     );
-    const allBranches = await Promise.all(
-      params.branchesCodes.map(
-        async (branch) =>
-          await this.getBranchJE(params.startDate, params.endDate, branch)
-      )
-    );
+    const allBranches = [];
+    for (let i = 0; i < params.branchesCodes.length; i++) {
+      const branchCode = params.branchesCodes[i];
+      const branchJE = await this.getBranchJE(
+        params.startDate,
+        params.endDate,
+        branchCode
+      );
+      allBranches.push(branchJE);
+    }
     await promises.writeFile(
       "./export.json",
       JSON.stringify(allBranches.flat())
     );
+    console.log(`exported`);
   }
 }
 

@@ -108,12 +108,16 @@ class Script {
     const params = JSON.parse(
       (await promises.readFile("./params.json")).toString()
     );
-    const allBranches = await Promise.all(
-      params.branchesCodes.map(
-        async (branch) =>
-          await this.getBranchJE(params.startDate, params.endDate, branch)
-      )
-    );
+    const allBranches = [];
+    for (let i = 0; i < params.branchesCodes.length; i++) {
+      const branchCode = params.branchesCodes[i];
+      const branchJE = await this.getBranchJE(
+        params.startDate,
+        params.endDate,
+        branchCode
+      );
+      allBranches.push(branchJE);
+    }
     if (allBranches.length) await this.insertJE(allBranches.flat());
     else console.log("no data to insert");
   }
