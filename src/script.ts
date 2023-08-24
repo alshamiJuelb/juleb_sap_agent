@@ -4,7 +4,7 @@ import { existsSync, promises } from "fs";
 
 class Script {
   url = "https://api.juleb.com/agent_receiver/sap";
-  // url = "https://5e7e-176-18-80-157.ngrok-free.app/sap";
+  // url = "http://localhost:5006/sap";
 
   async getBranchJE(startDate, endDate, companyCode) {
     try {
