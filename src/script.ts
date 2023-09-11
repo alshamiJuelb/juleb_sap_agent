@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as sql from "mssql";
-import { existsSync, promises } from "fs";
+import { promises } from "fs";
 
 class Script {
   url = "https://api.juleb.com/agent_receiver/sap";
@@ -100,25 +100,10 @@ class Script {
   }
 
   async wrapper() {
-    const paramsExist = existsSync("./params.json");
-    if (!paramsExist) {
-      console.log("make sure to have params.json in the project directory");
-      return;
-    }
-    const params = JSON.parse(
-      (await promises.readFile("./params.json")).toString()
+    const allBranches = JSON.parse(
+      (await promises.readFile("./export.json")).toString()
     );
-    const allBranches = [];
-    for (let i = 0; i < params.branchesCodes.length; i++) {
-      const branchCode = params.branchesCodes[i];
-      const branchJE = await this.getBranchJE(
-        params.startDate,
-        params.endDate,
-        branchCode
-      );
-      allBranches.push(branchJE);
-    }
-    if (allBranches.length) await this.insertJE(allBranches.flat());
+    if (allBranches.length) await this.insertJE(allBranches);
     else console.log("no data to insert");
   }
 }
