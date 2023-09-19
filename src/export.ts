@@ -3,13 +3,13 @@ import { existsSync, promises } from "fs";
 
 class Script {
   url = "https://api.juleb.com/agent_receiver/sap";
-  // url = "http://localhost:5006/sap";
+  // url = "http://192.168.53.64:5001/sap";
 
-  async getBranchJE(startDate, endDate, companyCode) {
+  async getBranchJE(startDate, endDate, companyCode, types) {
     try {
       return (
         await axios.get(`${this.url}/journal-entries`, {
-          params: { startDate, endDate, companyCode },
+          params: { startDate, endDate, companyCode, types },
         })
       ).data;
     } catch (err) {
@@ -34,7 +34,8 @@ class Script {
       const branchJE = await this.getBranchJE(
         params.startDate,
         params.endDate,
-        branchCode
+        branchCode,
+        params.types.join(",")
       );
       allBranches.push(branchJE);
     }
